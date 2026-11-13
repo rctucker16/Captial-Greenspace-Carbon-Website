@@ -3,7 +3,7 @@ capital-greenspace-webgis/
 ├── requirements.txt           # Python dependencies (geopandas, rasterio, fastapi, oracledb, etc.)
 ├── .gitignore                 # Ignore .env credentials, large raw LiDAR rasters, and cache files
 │
-├── etl/                       # Lane 2: Spatial ETL & Biomass Pipeline
+├── data_processing/                       # Lane 2: Spatial ETL & Biomass Pipeline
 │   ├── 01_chm_biomass.py      # LiDAR CHM processing, local OLS regression, 0.47 carbon conversion
 │   ├── 02_spatial_joins.py    # Data Zone environmental deprivation joins & 5-step priority weights
 │   └── export_geojson.py      # Exports processed EPSG:27700 data to EPSG:4326 GeoJSON for Leaflet
