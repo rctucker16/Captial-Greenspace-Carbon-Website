@@ -1,0 +1,28 @@
+capital-greenspace-webgis/
+├── README.md                  # Project overview, methodology summary, setup & run instructions
+├── requirements.txt           # Python dependencies (geopandas, rasterio, fastapi, oracledb, etc.)
+├── .gitignore                 # Ignore .env credentials, large raw LiDAR rasters, and cache files
+│
+├── etl/                       # Lane 2: Spatial ETL & Biomass Pipeline
+│   ├── 01_chm_biomass.py      # LiDAR CHM processing, local OLS regression, 0.47 carbon conversion
+│   ├── 02_spatial_joins.py    # Data Zone environmental deprivation joins & 5-step priority weights
+│   └── export_geojson.py      # Exports processed EPSG:27700 data to EPSG:4326 GeoJSON for Leaflet
+│
+├── backend/                   # Optional: FastAPI/Flask server if streaming from Oracle Spatial
+│   ├── main.py                # API entry point and CORS configuration
+│   └── db_queries.py          # SDO_GEOMETRY to GeoJSON query functions
+│
+├── frontend/                  # Leaflet WebGIS Application
+│   ├── index.html             # Main layout (full-screen map, top 1M tree counter, slide-out KPI card)
+│   ├── css/
+│   │   └── style.css          # Neutral UI styling, responsive drawer, legend formatting
+│   ├── js/
+│   │   ├── map.js             # CartoDB Positron base map init & layer toggle logic
+│   │   ├── layers.js          # Viridis/Teal carbon styling, deprivation styling & 5-step slider logic
+│   │   └── ui.js              # Park pop-up card rendering & preset planting scenario buttons
+│   └── data/
+│       └── edinburgh_sites.geojson  # Pre-computed GeoJSON (21 sites + 5 slider weight columns)
+│
+└── docs/                     
+    └── system_architecture.png
+
