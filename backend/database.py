@@ -1,1 +1,1 @@
-# Oracle Spatial connection pool
+# Oracle Spatial connection pool (using OracleDB)
