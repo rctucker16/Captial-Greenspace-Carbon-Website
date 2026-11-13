@@ -1,1 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edinburgh Capital Greenspace WebGIS</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    <!-- Top Header & KPI Tracker -->
+    <header id="header">
+        <div class="title-area">
+            <h1>Edinburgh Capital Greenspace</h1>
+            <span class="subtitle">Urban Forestry & Equity Prioritization</span>
+        </div>
+        <div class="kpi-banner">
+            <span class="kpi-label">Tree Progress:</span>
+            <span id="tree-counter" class="kpi-value">412,850 / 1,000,000</span>
+        </div>
+    </header>
 
+    <!-- Main Map Container -->
+    <div id="map"></div>
+
+    <!-- Layer Toggle & Slider Control Panel -->
+    <div id="control-panel" class="leaflet-control">
+        <h3>Map Layers</h3>
+        <div class="layer-toggles">
+            <label><input type="radio" name="layer" value="base" checked> Base Zoning</label>
+            <label><input type="radio" name="layer" value="carbon"> Layer 1: Carbon Stock</label>
+            <label><input type="radio" name="layer" value="deprivation"> Layer 2: Deprivation Index</label>
+            <label><input type="radio" name="layer" value="priority"> Layer 3: Planting Priority</label>
+        </div>
+
+        <div id="slider-container" class="slider-box hidden">
+            <label for="priority-slider">Prioritize Social Equity vs Carbon</label>
+            <input type="range" id="priority-slider" min="0" max="4" step="1" value="2">
+            <span id="slider-label">Balanced Weight (Step 3/5)</span>
+        </div>
+    </div>
+
+    <!-- Park Details Slide-Out Drawer -->
+    <div id="info-drawer" class="drawer hidden">
+        <button id="close-drawer">×</button>
+        <h2 id="park-title">Park Name</h2>
+        <div class="metrics-list">
+            <p><strong>Current Trees:</strong> <span id="metric-trees">--</span></p>
+            <p><strong>Carbon Stock:</strong> <span id="metric-carbon">--</span> tC</p>
+            <p><strong>Deprivation Percentile:</strong> <span id="metric-deprivation">--</span>th</p>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Modular JS Scripts -->
+    <script src="js/map.js"></script>
+    <script src="js/layers.js"></script>
+    <script src="js/ui.js"></script>
+</body>
+</html>
