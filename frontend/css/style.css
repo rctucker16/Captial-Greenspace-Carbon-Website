@@ -1,1 +1,123 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
 
+#header {
+    height: 60px;
+    background: #1b263b;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    z-index: 1000;
+    position: relative;
+}
+
+.title-area h1 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.subtitle {
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+.kpi-banner {
+    background: #0d1b2a;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    border: 1px solid #415a77;
+}
+
+.kpi-value {
+    color: #4ade80;
+    font-weight: bold;
+}
+
+#map {
+    height: calc(100vh - 60px);
+    width: 100%;
+    background: #f8fafc;
+}
+
+#control-panel {
+    position: absolute;
+    top: 80px;
+    right: 20px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    width: 240px;
+}
+
+#control-panel h3 {
+    margin: 0 0 10px 0;
+    font-size: 0.95rem;
+    color: #1e293b;
+}
+
+.layer-toggles label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.slider-box {
+    margin-top: 15px;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 10px;
+}
+
+.slider-box label {
+    font-size: 0.75rem;
+    color: #64748b;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.slider-box input {
+    width: 100%;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.drawer {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    z-index: 1000;
+    width: 280px;
+}
+
+.drawer h2 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    color: #0f172a;
+}
+
+#close-drawer {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #64748b;
+}
