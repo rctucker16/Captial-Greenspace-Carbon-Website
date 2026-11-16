@@ -8,5 +8,8 @@ The central element of this project is an interactive Leaflet-based WebGIS inter
 # Key UI Features & Capabilites 
 
 **Interactive Map & Zoning: ** Full-screen map of Edinburgh with public greenspaces highlighted in green, brownspaces in brown, and surrounding areas in neutral tones.
+
 **KPI Tracker: ** A top-screen progress counter tracking city-wide tree-planting progress toward the 1-million-tree goal. 
+
+
 
