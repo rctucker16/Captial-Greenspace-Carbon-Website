@@ -20,4 +20,5 @@ ORDER BY gs.greenspace_id
 """
 
 try:
-  cursor.execute
+  cursor.execute(sql)
+  columns = [col[0].lower() for col in 
