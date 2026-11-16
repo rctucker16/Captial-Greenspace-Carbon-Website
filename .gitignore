@@ -1,1 +1,49 @@
+# Python & Virtual Environments
+
+__pychache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.env
+.ipynb_checkpoints/
+
+# Geospatial Data & Large Raster Files 
+
+# Exclude raw multi-gigabyte LiDAR tiles, DTM/DSM rasters, and point clouds 
+*.tif
+*.tiff
+*.img
+*.las
+*.laz
+*.gpkg
+*.sqlite 
+
+# Keep sample processed GeoJSON files needed for frontend testing 
+
+!frontend/data/edinburgh_sites.geojson
+data/raw/
+data/processed/
+
+# IDEs, Editors & Operating Systems 
+
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Build & logs
+
+dist/
+build/
+*.egg-info/
+npm-debug.log*
+logs/
+*.log
+
 
