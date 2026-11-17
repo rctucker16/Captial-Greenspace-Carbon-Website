@@ -21,4 +21,5 @@ ORDER BY gs.greenspace_id
 
 try:
   cursor.execute(sql)
-  columns = [col[0].lower() for col in 
+  columns = [col[0].lower() for col in cursor.description]
+  return [dict(zip(columns, row 
