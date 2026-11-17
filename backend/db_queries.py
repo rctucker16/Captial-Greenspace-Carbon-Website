@@ -56,3 +56,30 @@ def fetch_greenspaces_geojson():
         for row in cursor.fetchall():
             row_dict = dict(zip(columns, row))
             geom_str = row_dict.pop('geojson_geom', None)
+
+            if geom_str:
+                geom_json = json.loads(geom_str)
+                feature = {
+                    "type": "Feature",
+                    "geometry": geom_json,
+                    "properties": row_dict
+                {
+                features.append(feature)
+    execept Exception as e:
+        print(f"Error in fetch_greenspaces_geojson: {e}")
+        return {"type": "FeatureCollection", "features": []}
+    finally: 
+        cursor.close()
+        db.manager.release_connection(connection)
+
+def fetch_environmental_deprivation():
+    """
+    Queries environmental deprivation scores, canopy percentages,
+    and deprivation classes linked to data zones.
+    """
+    connection = db_manager.get_connection()
+    cursor = connection.cursor()
+
+sql = """
+    SELECT 
+        z.czone
