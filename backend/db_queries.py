@@ -22,4 +22,37 @@ ORDER BY gs.greenspace_id
 try:
   cursor.execute(sql)
   columns = [col[0].lower() for col in cursor.description]
-  return [dict(zip(columns, row 
+  return [dict(zip(columns, row)) for row in cursor.fetchall()]
+except Exception as e:
+    print(f"Error in fetch_greenspace_carbon_metrics: {e}")
+    return []
+finally:
+    cursor.close()
+    db_manager.release_connection(connection)
+
+def fetch_greenspaces_geojson():
+    """ Queries Oracle Spatial, converting SDO_GEOMETRY polygons into standard GeoJSON format for the Leaflet map frontend. """
+
+    connection = db_manager.get_connection()
+    cursor = connection.cursor()
+
+    sql = """
+        SELECT
+            g.greenspace_id,
+            g.site_name,
+            g.site_type,
+            g.area_m2,
+            COALESCE (c.carbon_stock_kg_carbon, 0) AS carbon_stock_kg_carbon,
+            SDO_UTIL.TO_GEOJSON(g.goem) AS geojson_geom
+        FROM cgs_greenspace g
+        LEFT JOIN cgs_site_carbon c ON g.greenspace_id = c.greenspace_id 
+    """
+
+    try: 
+        cursor.execute(sql)
+        columns = [col[0].lower() for col in cursor.description]
+
+        features = []
+        for row in cursor.fetchall():
+            row_dict = dict(zip(columns, row))
+            geom_str = row_dict.pop('geojson_geom', None)
