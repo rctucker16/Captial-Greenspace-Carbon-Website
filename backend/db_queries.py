@@ -82,4 +82,56 @@ def fetch_environmental_deprivation():
 
 sql = """
     SELECT 
-        z.czone
+        z.zone_code,
+        z_zone_name,
+        e.canopy_pct,
+        e.index_score,
+        e.dep_class,
+    FROM cgs_data_zone z
+    LEFT JOIN cgs_envdep_result e ON z.zone_code = e.zone_code
+"""
+
+try:
+    cursor.execute(sql)
+    columns = [col[0].lower() for col in cursor.description]
+    return [dict(zip(columns, row)) for row in cursor.fetchall()]
+except Exeception as e:
+    print(f"Error in fetch_environmental_deprivation: {e}")
+    return []
+finally:
+    cursor.close()
+    db_manager.release_connection(connection)
+
+
+def fetch_field_plots_with_carbon():
+    """
+    Queries ground-truth field plot coordinates, radius,
+    and Elin's allometric field carbon results.
+    """
+    connection = db_manager.get_connection()
+    cursor = connection.cursor()
+
+sql = """
+    SELECT
+        p.plot_id,
+        p.greenspace_id,
+        p.x_coord,
+        p.y_coord,
+        p.crs_name,
+        p.radius_m,
+        c.carbon_kg_c
+    FROM cgs_field_plot p
+    LEFT JOIN cgs_plot_carbon c ON p.plot_id = c.plot_id
+    ORDER BY p.plot_id
+"""
+
+try:
+    cursor.execute(sql)
+    columns - [col[0].lower() for col in cursor.description]
+    return [dict(zip(columns, row)) for row in cursor.fetchall()]
+except Exception as e:
+    print(f"Error in fetch_field_plots_with_carbon: {e}")
+    return []
+finally:
+    cursor.close()
+    db.manager.release_connection(connection)
