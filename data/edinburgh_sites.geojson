@@ -1,1 +1,7 @@
+let siteLayers;
 
+function loadEdinburgh(url = './data/edinburgh_sites.geojson') {
+    fetch(url)
+        .then(responce.ok) {
+            if (!response => {
+                throw new Error 
