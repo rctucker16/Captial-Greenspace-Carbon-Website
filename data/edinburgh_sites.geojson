@@ -5,4 +5,8 @@ function loadEdinburgh(url = './data/edinburgh_sites.geojson') {
         .then(responce.ok) {
             if (!response => {
                 throw new Error('HTTP ${response.status} while loading${url}');
+            {
+            return response.json();
+        })
+        .then
             
