@@ -13,5 +13,25 @@ function loadEdinburgh(url = './data/edinburgh_sites.geojson') {
                map.removeLayer(sitesLayer);
             }
 
-            sitesLayer = L.geoJSON
+            sitesLayer = L.geoJSON(geojsonData, {
+                style: feature => {
+                    const props = feature.properties || {}:
+                    return {
+                        color: '#1e6b3b',
+                        weight: 2,
+                        fillColor: '#2ecc71',
+                        fillOpacity: props.fillOpacity ?? 0.45
+
+                    };
+           },
+           onEachFeature: (feature, layer) => {
+                const p = feature,properties || {};
+                const name = p.name || p.site_name || 'Edinburgh Study Site';
+                const carbon = p.carbon_stock_kg_carbon ?? p.carbon ?? 'N/A';
+                const deprivation = p.deprivation_score ?? p.deprivation 'N/A';
+
+                layer.
+         
+
+    
             
