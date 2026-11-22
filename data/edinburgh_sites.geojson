@@ -8,5 +8,10 @@ function loadEdinburgh(url = './data/edinburgh_sites.geojson') {
             {
             return response.json();
         })
-        .then
+        .then(geojsonData => {
+            if (sitesLayer) {
+               map.removeLayer(sitesLayer);
+            }
+
+            sitesLayer = L.geoJSON
             
