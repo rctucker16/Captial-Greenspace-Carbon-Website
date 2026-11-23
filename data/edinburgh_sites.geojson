@@ -58,7 +58,16 @@ function loadEdinburgh(url = './data/edinburgh_sites.geojson') {
         // Update site count in sidebar if element exists 
         const countEl = document.getElementById('site-count');
         if (countEl && Array.isArray(geojsonData.features)) {
-            countEl.textContent = geojsonData.features
+            countEl.textContent = geojsonData.features.length;
+        }
+    })
+    .catch(err => {
+        console.error('Failed to load edinburgh_sites.geojson:', err);
+    });
+}
+
+// Call on page load 
+loadEdinburghSites();
         
     
             
