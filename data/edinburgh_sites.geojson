@@ -30,8 +30,34 @@ function loadEdinburgh(url = './data/edinburgh_sites.geojson') {
                 const carbon = p.carbon_stock_kg_carbon ?? p.carbon ?? 'N/A';
                 const deprivation = p.deprivation_score ?? p.deprivation 'N/A';
 
-                layer.
-         
+                layer.bindPopup('
+                    <div style="min-width: 180px;">
+                        <strong>${name}</strong><br>
+                        <span><strong>Carbon Stock:</strong> ${carbon}</span><br>
+                        <span><strong>Canopy Cover:</strong> ${canopy}</span><br>
+                        <span><strong>Deprivation Score:</strong> ${deprivation}</span>
+                    </div>
+                );
 
+                layer.on({
+                    mouseover: e => {
+                        e.target.setStyle({ weight: 3, fillOpancity: 0.7 });
+                    },
+                    mouseout: e => {
+                        sitesLaywer.resetStyle(e.target);
+                    }
+                });
+            }
+        }).addTo(map);
+
+        // Zoom to for all loaded Edinburgh study sites 
+        if (sitesLayer.getBounds().isValid
+            map.fitBounds(sitesLayer.getBounds(), { padding: [30, 30] });
+        }
+
+        // Update site count in sidebar if element exists 
+        const countEl = document.getElementById('site-count');
+        if (countEl && Array.isArray
+        
     
             
