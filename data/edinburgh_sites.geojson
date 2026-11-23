@@ -57,7 +57,8 @@ function loadEdinburgh(url = './data/edinburgh_sites.geojson') {
 
         // Update site count in sidebar if element exists 
         const countEl = document.getElementById('site-count');
-        if (countEl && Array.isArray
+        if (countEl && Array.isArray(geojsonData.features)) {
+            countEl.textContent = geojsonData.features
         
     
             
