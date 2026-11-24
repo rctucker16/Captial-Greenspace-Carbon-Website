@@ -6,9 +6,7 @@
   <title>Capital Greenspace — Edinburgh</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     html, body {
       margin: 0;
       padding: 0;
@@ -23,481 +21,93 @@
       height: 100vh;
       z-index: 1;
     }
-
-    /* Shared floating card styling */
     .ui-card {
       position: absolute;
       z-index: 1000;
       background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(8px);
       border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
-    }
-
-    /* Top-left header card */
-    .header-card {
-      top: 16px;
-      left: 16px;
-      width: 430px;
-      max-width: calc(100vw - 32px);
-      padding: 16px 18px;
-    }
-    .header-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
-    }
-    .brand-row {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-    }
-    .brand-icon {
-      width: 30px;
-      height: 30px;
-      border-radius: 8px;
-      background: #dcfce7;
-      color: #15803d;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-    .header-card h1 {
-      margin: 0;
-      font-size: 16px;
-      line-height: 1.25;
-      font-weight: 700;
-    }
-    .header-card .subtitle {
-      margin: 3px 0 0;
-      font-size: 12px;
-      color: #6b7280;
-    }
-    .gh-badge {
-      background: #f3f4f6;
-      border: 1px solid #e5e7eb;
-      color: #111827;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 5px 9px;
-      border-radius: 7px;
-      white-space: nowrap;
-    }
-    .target-section {
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px solid #f3f4f6;
-    }
-    .target-labels {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
-      margin-bottom: 6px;
-    }
-    .target-labels span:first-child {
-      color: #4b5563;
-      font-weight: 500;
-    }
-    .target-labels span:last-child {
-      color: #047857;
-      font-weight: 700;
-    }
-    .progress-track {
-      width: 100%;
-      height: 7px;
-      background: #e5e7eb;
-      border-radius: 999px;
-      overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      width: 41.3%;
-      background: #10b981;
-      border-radius: 999px;
-    }
-
-    /* Top-right layer panel */
-    .layers-card {
-      top: 16px;
-      right: 16px;
-      width: 295px;
-      padding: 14px;
-    }
-    .layers-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .layers-title {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      color: #4b5563;
-      text-transform: uppercase;
-    }
-    .sites-pill {
-      font-size: 11px;
-      font-weight: 600;
-      color: #374151;
-      background: #f3f4f6;
-      padding: 2px 8px;
-      border-radius: 999px;
-    }
-    .layer-item {
-      border: 1px solid #e5e7eb;
-      border-radius: 10px;
-      padding: 9px 11px;
-      margin-bottom: 8px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      background: #ffffff;
-    }
-    .layer-item:last-child {
-      margin-bottom: 0;
-    }
-    .layer-item.active {
-      border-color: #10b981;
-      background: #f0fdf4;
-    }
-    .layer-item-top {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12.5px;
-      font-weight: 600;
-      color: #111827;
-    }
-    .radio-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      border: 2px solid #9ca3af;
-      flex-shrink: 0;
-    }
-    .layer-item.active .radio-dot {
-      border-color: #059669;
-      background: #10b981;
-      box-shadow: inset 0 0 0 2px #ffffff;
-    }
-    .layer-desc {
-      margin: 3px 0 0 20px;
-      font-size: 11px;
-      color: #6b7280;
-    }
-
-    /* Draw toolbar positioned below top-right layer card */
-    .draw-card {
-      top: 378px;
-      right: 16px;
-      width: 295px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
       padding: 12px 14px;
     }
-    .draw-controls {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-top: 8px;
-    }
-    .draw-select {
-      flex: 1;
-      padding: 7px 10px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 12px;
-      background: #ffffff;
-      color: #111827;
-    }
-    .draw-btn {
-      padding: 7px 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      background: #f9fafb;
-      color: #111827;
-      cursor: pointer;
-    }
-    .draw-btn:hover {
-      background: #f3f4f6;
-    }
-    .draw-hint {
-      margin: 7px 0 0;
-      font-size: 11px;
-      color: #6b7280;
-    }
+    .header-card { top: 14px; left: 14px; width: 380px; max-width: calc(100vw - 28px); }
+    .header-card h1 { margin: 0; font-size: 15px; }
+    .header-card p { margin: 4px 0 0; font-size: 12px; color: #6b7280; }
 
-    /* Bottom-left detail card */
-    .detail-card {
-      bottom: 20px;
-      left: 16px;
-      width: 340px;
-      max-width: calc(100vw - 32px);
-      padding: 16px;
-    }
-    .detail-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .tag-pill {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      color: #047857;
-      background: #d1fae5;
-      padding: 3px 8px;
-      border-radius: 6px;
-      text-transform: uppercase;
-    }
-    .close-btn {
-      background: none;
-      border: none;
-      font-size: 18px;
-      line-height: 1;
-      color: #9ca3af;
-      cursor: pointer;
-      padding: 0 4px;
-    }
-    .close-btn:hover {
-      color: #374151;
-    }
-    .detail-card h2 {
-      margin: 8px 0 12px;
-      font-size: 16px;
-      font-weight: 700;
-      color: #111827;
-    }
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-    .metric-box {
-      background: #f9fafb;
-      border: 1px solid #f3f4f6;
-      border-radius: 9px;
-      padding: 9px 10px;
-    }
-    .metric-label {
-      font-size: 11px;
-      color: #6b7280;
-      margin-bottom: 3px;
-    }
-    .metric-value {
-      font-size: 14px;
-      font-weight: 700;
-      color: #111827;
-    }
-    .priority-banner {
-      background: #0f172a;
-      color: #ffffff;
-      border-radius: 10px;
-      padding: 11px 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-    .priority-kicker {
-      font-size: 9.5px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      color: #34d399;
-      text-transform: uppercase;
-    }
-    .priority-sub {
-      font-size: 11.5px;
-      color: #e5e7eb;
-      margin-top: 2px;
-    }
-    .priority-score {
-      text-align: right;
-      line-height: 1.1;
-    }
-    .priority-score strong {
-      font-size: 20px;
-      color: #34d399;
+    .layers-card { top: 14px; right: 14px; width: 250px; }
+    .card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #4b5563; margin-bottom: 8px; }
+    .layer-btn {
       display: block;
-    }
-    .priority-score span {
-      font-size: 10px;
-      color: #9ca3af;
-    }
-
-    /* Bottom-right legend card */
-    .legend-card {
-      bottom: 20px;
-      right: 16px;
-      width: 210px;
-      padding: 12px 14px;
-    }
-    .legend-title {
-      font-size: 12px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: #111827;
-    }
-    .legend-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 11.5px;
-      color: #374151;
+      width: 100%;
+      text-align: left;
+      padding: 7px 10px;
       margin-bottom: 6px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
     }
-    .legend-row:last-child {
-      margin-bottom: 0;
+    .layer-btn.active { border-color: #10b981; background: #f0fdf4; color: #065f46; }
+
+    .draw-card { top: 215px; right: 14px; width: 250px; }
+    .draw-row { display: flex; gap: 6px; }
+    select, button.action-btn {
+      padding: 6px 8px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 12px;
+      background: #fff;
+      cursor: pointer;
     }
-    .swatch {
-      width: 11px;
-      height: 11px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
+    select { flex: 1; }
+    .hint { margin: 8px 0 0; font-size: 11px; color: #6b7280; }
+    .area-out { margin: 6px 0 0; font-size: 12px; font-weight: 700; color: #047857; }
+
+    .detail-card { bottom: 16px; left: 14px; width: 320px; max-width: calc(100vw - 28px); }
+    .detail-card h2 { margin: 0 0 8px; font-size: 15px; }
+    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 12px; }
+    .stat-box { background: #f9fafb; border-radius: 8px; padding: 8px; }
+    .stat-box span { display: block; font-size: 11px; color: #6b7280; }
   </style>
 </head>
 <body>
-
-  <!-- Top-Left Header & Target Progress -->
   <div class="ui-card header-card">
-    <div class="header-top">
-      <div class="brand-row">
-        <div class="brand-icon">🌳</div>
-        <div>
-          <h1>Capital Greenspace — Edinburgh</h1>
-          <p class="subtitle">Urban Forestry Carbon & Environmental Equity Decision Support</p>
-        </div>
-      </div>
-      <div class="gh-badge"></> GitHub JS Modules</div>
-    </div>
-
-    <div class="target-section">
-      <div class="target-labels">
-        <span>Edinburgh 1 Million Trees Target (Study Sites)</span>
-        <span>412,850 / 1,000,000 Trees (41.3%)</span>
-      </div>
-      <div class="progress-track">
-        <div class="progress-fill"></div>
-      </div>
-    </div>
+    <h1>Capital Greenspace — Edinburgh</h1>
+    <p>1M Trees Target: 412,850 / 1,000,000 (41.3%)</p>
   </div>
 
-  <!-- Top-Right Layer Switcher -->
   <div class="ui-card layers-card">
-    <div class="layers-header">
-      <span class="layers-title">Map Data Layers</span>
-      <span class="sites-pill">21 Study Sites</span>
-    </div>
-
-    <div class="layer-item active" data-layer="zoning" onclick="selectLayer('zoning', this)">
-      <div class="layer-item-top">
-        <span class="radio-dot"></span>
-        <span>Base Zoning View</span>
-      </div>
-      <p class="layer-desc">Public greenspaces & brownspace sites</p>
-    </div>
-
-    <div class="layer-item" data-layer="carbon" onclick="selectLayer('carbon', this)">
-      <div class="layer-item-top">
-        <span class="radio-dot"></span>
-        <span>Layer 1: Current Carbon Stock</span>
-      </div>
-      <p class="layer-desc">LiDAR biomass carbon storage (tC)</p>
-    </div>
-
-    <div class="layer-item" data-layer="deprivation" onclick="selectLayer('deprivation', this)">
-      <div class="layer-item-top">
-        <span class="radio-dot"></span>
-        <span>Layer 2: Environmental Deprivation</span>
-      </div>
-      <p class="layer-desc">Local data zone deprivation percentile</p>
-    </div>
-
-    <div class="layer-item" data-layer="planting" onclick="selectLayer('planting', this)">
-      <div class="layer-item-top">
-        <span class="radio-dot"></span>
-        <span>Layer 3: Proposed Planting Zones</span>
-      </div>
-      <p class="layer-desc">Multi-criteria priority overlay</p>
-    </div>
+    <div class="card-title">Map Layers (21 Study Sites)</div>
+    <button class="layer-btn active" onclick="setLayerMode('zoning', this)">Base Zoning View</button>
+    <button class="layer-btn" onclick="setLayerMode('carbon', this)">Current Carbon Stock (tC)</button>
+    <button class="layer-btn" onclick="setLayerMode('deprivation', this)">Environmental Deprivation</button>
+    <button class="layer-btn" onclick="setLayerMode('planting', this)">Proposed Planting Zones</button>
   </div>
 
-  <!-- Draw Features Card -->
   <div class="ui-card draw-card">
-    <span class="layers-title">Draw Features</span>
-    <div class="draw-controls">
-      <select class="draw-select" id="type">
-        <option value="None" selected>None (Pan Map)</option>
+    <div class="card-title">Draw & Measure Polygon</div>
+    <div class="draw-row">
+      <select id="drawType">
+        <option value="None">None (Pan)</option>
         <option value="Point">Point</option>
         <option value="LineString">LineString</option>
         <option value="Polygon">Polygon</option>
       </select>
-      <button class="draw-btn" type="button" id="undo">Undo</button>
+      <button class="action-btn" type="button" id="undoBtn">Undo</button>
     </div>
-    <p class="draw-hint" id="drawHint">Select a geometry type to sketch candidate planting sites. Double-click to finish lines/polygons.</p>
+    <p class="hint" id="drawHint">Click vertices to draw; double-click to finish.</p>
+    <p class="area-out" id="areaOut">Planar Area: —</p>
   </div>
 
-  <!-- Bottom-Left Site Inspector Card -->
   <div class="ui-card detail-card" id="detailCard">
-    <div class="detail-top">
-      <span class="tag-pill" id="siteType">Public Greenspace</span>
-      <button class="close-btn" onclick="document.getElementById('detailCard').style.display='none'" title="Close">×</button>
-    </div>
     <h2 id="siteName">Sighthill & Calders Green Corridor</h2>
-
-    <div class="metrics-grid">
-      <div class="metric-box">
-        <div class="metric-label">🌲 Current Trees</div>
-        <div class="metric-value" id="metricTrees">31,400</div>
-      </div>
-      <div class="metric-box">
-        <div class="metric-label">🌿 Carbon Stock</div>
-        <div class="metric-value" id="metricCarbon">4,890 tC</div>
-      </div>
-      <div class="metric-box">
-        <div class="metric-label">☁️ CO₂ Sequestration</div>
-        <div class="metric-value" id="metricCo2">17,946 tCO₂</div>
-      </div>
-      <div class="metric-box">
-        <div class="metric-label">📊 Deprivation Index</div>
-        <div class="metric-value" id="metricDeprivation">95th Percentile</div>
-      </div>
-    </div>
-
-    <div class="priority-banner">
-      <div>
-        <div class="priority-kicker">Planting Priority — 50% (Balanced)</div>
-        <div class="priority-sub" id="priorityText">High Candidate: Strong canopy & equity impact</div>
-      </div>
-      <div class="priority-score">
-        <strong id="priorityScore">84</strong>
-        <span>/100</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Bottom-Right Legend -->
-  <div class="ui-card legend-card">
-    <div class="legend-title">Base Land Zoning</div>
-    <div class="legend-row">
-      <span class="swatch" style="background:#10b981;"></span>
-      <span>Public Greenspace</span>
-    </div>
-    <div class="legend-row">
-      <span class="swatch" style="background:#d97706;"></span>
-      <span>Brownspace Site</span>
-    </div>
-    <div class="legend-row">
-      <span class="swatch" style="background:#9ca3af;"></span>
-      <span>Urban Fabric (Base)</span>
+    <div class="stats">
+      <div class="stat-box"><span>Current Trees</span><strong>31,400</strong></div>
+      <div class="stat-box"><span>Carbon Stock</span><strong>4,890 tC</strong></div>
+      <div class="stat-box"><span>CO₂ Sequestration</span><strong>17,946 tCO₂</strong></div>
+      <div class="stat-box"><span>Deprivation</span><strong>95th Percentile</strong></div>
     </div>
   </div>
 
@@ -505,13 +115,14 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    const map = L.map('map', { zoomControl: false }).setView([55.9265, -3.2835], 14);
+    const map = L.map('map').setView([55.9265, -3.2835], 13);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
+    // 17 ground plots
     const groundPlotsData = [
       { id: 1,  biomass: 83134.15,  lat: 55.924954, lon: -3.149764 },
       { id: 2,  biomass: 200081.79, lat: 55.924274, lon: -3.149615 },
@@ -532,189 +143,157 @@
       { id: 17, biomass: 152335.60, lat: 55.932874, lon: -3.114247 }
     ];
 
-    const groundPlotsLayer = L.layerGroup(
-      groundPlotsData.map(pt =>
-        L.circleMarker([pt.lat, pt.lon], {
-          radius: 6,
-          color: '#1e3a8a',
-          weight: 2,
-          fillColor: '#3b82f6',
-          fillOpacity: 0.85
-        }).bindPopup(
-          `<strong>Field Plot #${pt.id}</strong><br>` +
-          `<strong>Ground Biomass:</strong> ${pt.biomass.toLocaleString()} kg/ha`
-        )
-      )
-    ).addTo(map);
+    groundPlotsData.forEach(pt => {
+      L.circleMarker([pt.lat, pt.lon], {
+        radius: 6,
+        color: '#1e3a8a',
+        weight: 2,
+        fillColor: '#3b82f6',
+        fillOpacity: 0.85
+      })
+        .bindPopup(`<strong>Field Plot #${pt.id}</strong><br>Biomass: ${pt.biomass.toLocaleString()} kg/ha`)
+        .addTo(map);
+    });
 
-    const sampleSites = [
-      {
-        name: 'Sighthill & Calders Green Corridor',
-        type: 'Public Greenspace',
-        trees: '31,400',
-        carbon: '4,890 tC',
-        co2: '17,946 tCO₂',
-        deprivation: '95th Percentile',
-        priorityText: 'High Candidate: Strong canopy & equity impact',
-        score: 84,
-        coords: [
-          [55.9295, -3.2920],
-          [55.9302, -3.2760],
-          [55.9225, -3.2750],
-          [55.9218, -3.2905]
-        ]
-      }
+    // Sample study site polygon
+    const siteCoords = [
+      [55.9295, -3.2920],
+      [55.9302, -3.2760],
+      [55.9225, -3.2750],
+      [55.9218, -3.2905]
     ];
 
-    let activePolygon;
+    const layerStyles = {
+      zoning:      { color: '#111827', fillColor: '#22c55e', fillOpacity: 0.6 },
+      carbon:      { color: '#065f46', fillColor: '#10b981', fillOpacity: 0.7 },
+      deprivation: { color: '#991b1b', fillColor: '#f59e0b', fillOpacity: 0.65 },
+      planting:    { color: '#1d4ed8', fillColor: '#3b82f6', fillOpacity: 0.65 }
+    };
 
-    function renderSites(mode = 'zoning') {
-      if (activePolygon) {
-        map.removeLayer(activePolygon);
-      }
+    const sitePolygon = L.polygon(siteCoords, { ...layerStyles.zoning, weight: 2 })
+      .bindTooltip('Sighthill & Calders Green Corridor', { permanent: true, direction: 'center' })
+      .addTo(map);
 
-      const styles = {
-        zoning:      { color: '#111827', fillColor: '#22c55e', fillOpacity: 0.65 },
-        carbon:      { color: '#065f46', fillColor: '#10b981', fillOpacity: 0.72 },
-        deprivation: { color: '#991b1b', fillColor: '#f59e0b', fillOpacity: 0.65 },
-        planting:    { color: '#1d4ed8', fillColor: '#3b82f6', fillOpacity: 0.65 }
-      };
-
-      const s = sampleSites[0];
-      activePolygon = L.polygon(s.coords, {
-        ...(styles[mode] || styles.zoning),
-        weight: 2
-      }).addTo(map);
-
-      activePolygon.bindTooltip(s.name, { permanent: true, direction: 'center' });
-      activePolygon.on('click', () => {
-        document.getElementById('detailCard').style.display = 'block';
-        document.getElementById('siteName').textContent = s.name;
-        document.getElementById('siteType').textContent = s.type;
-        document.getElementById('metricTrees').textContent = s.trees;
-        document.getElementById('metricCarbon').textContent = s.carbon;
-        document.getElementById('metricCo2').textContent = s.co2;
-        document.getElementById('metricDeprivation').textContent = s.deprivation;
-        document.getElementById('priorityText').textContent = s.priorityText;
-        document.getElementById('priorityScore').textContent = s.score;
-      });
+    function setLayerMode(mode, btn) {
+      document.querySelectorAll('.layer-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      sitePolygon.setStyle(layerStyles[mode] || layerStyles.zoning);
     }
 
-    function selectLayer(layerKey, el) {
-      document.querySelectorAll('.layer-item').forEach(item => item.classList.remove('active'));
-      if (el) el.classList.add('active');
-      renderSites(layerKey);
+    // Simplified planar area calculation using Leaflet's projected meter coordinates + Shoelace
+    function calcPlanarAreaM2(latLngs) {
+      if (!latLngs || latLngs.length < 3) return 0;
+      const pts = latLngs.map(ll => L.CRS.EPSG3857.project(L.latLng(ll)));
+      let sum = 0;
+      for (let i = 0; i < pts.length; i++) {
+        const a = pts[i];
+        const b = pts[(i + 1) % pts.length];
+        sum += a.x * b.y - b.x * a.y;
+      }
+      return 0.5 * Math.abs(sum);
     }
 
-    // --- Drawing & Undo Support on Leaflet ---
-    const drawnItems = L.featureGroup().addTo(map);
-    const drawHistory = []; // Stack of completed layers or in-progress vertices
-    let drawType = 'None';
-    let currentPoints = [];
-    let previewLayer = null;
-
-    const typeSelect = document.getElementById('type');
-    const undoBtn = document.getElementById('undo');
-    const drawHint = document.getElementById('drawHint');
-
-    function clearDraft() {
-      currentPoints = [];
-      if (previewLayer) {
-        map.removeLayer(previewLayer);
-        previewLayer = null;
-      }
-    }
-
-    function updatePreview(mouseLatLng = null) {
-      if (previewLayer) {
-        map.removeLayer(previewLayer);
-        previewLayer = null;
-      }
-      const pts = mouseLatLng ? [...currentPoints, mouseLatLng] : [...currentPoints];
-      if (!pts.length) return;
-
-      if (drawType === 'LineString') {
-        previewLayer = L.polyline(pts, { color: '#059669', dashArray: '5,5', weight: 3 }).addTo(map);
-      } else if (drawType === 'Polygon') {
-        previewLayer = L.polygon(pts, { color: '#059669', fillColor: '#10b981', fillOpacity: 0.25, dashArray: '5,5' }).addTo(map);
-      }
-    }
-
-    function finishShape() {
-      if (drawType === 'LineString' && currentPoints.length >= 2) {
-        const line = L.polyline(currentPoints, { color: '#047857', weight: 3 }).addTo(drawnItems);
-        drawHistory.push({ kind: 'layer', layer: line });
-      } else if (drawType === 'Polygon' && currentPoints.length >= 3) {
-        const poly = L.polygon(currentPoints, { color: '#047857', fillColor: '#10b981', fillOpacity: 0.45, weight: 2 }).addTo(drawnItems);
-        drawHistory.push({ kind: 'layer', layer: poly });
-      }
-      clearDraft();
-    }
-
-    typeSelect.addEventListener('change', (e) => {
-      clearDraft();
-      drawType = e.target.value;
-      if (drawType === 'None') {
-        map.doubleClickZoom.enable();
-        drawHint.textContent = 'Drawing disabled. Click map or study site to inspect.';
-      } else {
-        map.doubleClickZoom.disable();
-        drawHint.textContent = drawType === 'Point'
-          ? 'Click on the map to place a Point feature.'
-          : `Click to add ${drawType} vertices; double-click to finish.`;
-      }
-    });
-
-    map.on('click', (e) => {
-      if (drawType === 'None') return;
-
-      if (drawType === 'Point') {
-        const marker = L.circleMarker(e.latlng, {
-          radius: 7,
-          color: '#065f46',
-          weight: 2,
-          fillColor: '#10b981',
-          fillOpacity: 0.9
-        }).addTo(drawnItems);
-        drawHistory.push({ kind: 'layer', layer: marker });
+    function showArea(m2) {
+      const el = document.getElementById('areaOut');
+      if (!m2) {
+        el.textContent = 'Planar Area: —';
         return;
       }
+      el.textContent = `Planar Area: ${m2.toLocaleString(undefined, { maximumFractionDigits: 1 })} m² (${(m2 / 10000).toFixed(2)} ha)`;
+    }
 
-      currentPoints.push(e.latlng);
-      drawHistory.push({ kind: 'vertex', type: drawType });
-      updatePreview();
+    // Drawing & Undo state
+    const drawnGroup = L.featureGroup().addTo(map);
+    const history = [];
+    let mode = 'None';
+    let points = [];
+    let draftLayer = null;
+
+    const drawSelect = document.getElementById('drawType');
+    const undoBtn = document.getElementById('undoBtn');
+
+    function resetDraft() {
+      points = [];
+      if (draftLayer) {
+        map.removeLayer(draftLayer);
+        draftLayer = null;
+      }
+    }
+
+    function redrawDraft(cursorLatLng = null) {
+      if (draftLayer) {
+        map.removeLayer(draftLayer);
+        draftLayer = null;
+      }
+      const pts = cursorLatLng ? [...points, cursorLatLng] : [...points];
+      if (!pts.length) return;
+
+      if (mode === 'LineString') {
+        draftLayer = L.polyline(pts, { color: '#059669', dashArray: '4,4' }).addTo(map);
+      } else if (mode === 'Polygon') {
+        draftLayer = L.polygon(pts, { color: '#059669', fillOpacity: 0.25, dashArray: '4,4' }).addTo(map);
+        if (pts.length >= 3) showArea(calcPlanarAreaM2(pts));
+      }
+    }
+
+    drawSelect.addEventListener('change', e => {
+      resetDraft();
+      mode = e.target.value;
+      if (mode === 'None') map.doubleClickZoom.enable();
+      else map.doubleClickZoom.disable();
     });
 
-    map.on('mousemove', (e) => {
-      if ((drawType === 'LineString' || drawType === 'Polygon') && currentPoints.length > 0) {
-        updatePreview(e.latlng);
+    map.on('click', e => {
+      if (mode === 'None') return;
+      if (mode === 'Point') {
+        const marker = L.circleMarker(e.latlng, { radius: 6, color: '#065f46', fillColor: '#10b981', fillOpacity: 0.9 }).addTo(drawnGroup);
+        history.push({ type: 'layer', layer: marker });
+        return;
+      }
+      points.push(e.latlng);
+      history.push({ type: 'vertex' });
+      redrawDraft();
+    });
+
+    map.on('mousemove', e => {
+      if ((mode === 'LineString' || mode === 'Polygon') && points.length > 0) {
+        redrawDraft(e.latlng);
       }
     });
 
-    map.on('dblclick', (e) => {
-      if (drawType === 'LineString' || drawType === 'Polygon') {
+    map.on('dblclick', e => {
+      if (mode === 'LineString' && points.length >= 2) {
         L.DomEvent.stopPropagation(e);
-        finishShape();
+        const line = L.polyline(points, { color: '#047857', weight: 3 }).addTo(drawnGroup);
+        history.push({ type: 'layer', layer: line });
+        resetDraft();
+      } else if (mode === 'Polygon' && points.length >= 3) {
+        L.DomEvent.stopPropagation(e);
+        const areaM2 = calcPlanarAreaM2(points);
+        const poly = L.polygon(points, { color: '#047857', fillColor: '#10b981', fillOpacity: 0.45 })
+          .bindPopup(`Area: ${areaM2.toLocaleString(undefined, { maximumFractionDigits: 1 })} m² (${(areaM2 / 10000).toFixed(2)} ha)`)
+          .addTo(drawnGroup);
+        history.push({ type: 'layer', layer: poly, areaM2 });
+        showArea(areaM2);
+        resetDraft();
       }
     });
 
     undoBtn.addEventListener('click', () => {
-      if (currentPoints.length > 0) {
-        currentPoints.pop();
-        if (drawHistory.length && drawHistory[drawHistory.length - 1].kind === 'vertex') {
-          drawHistory.pop();
-        }
-        updatePreview();
+      if (points.length > 0) {
+        points.pop();
+        if (history.length && history[history.length - 1].type === 'vertex') history.pop();
+        redrawDraft();
+        if (mode === 'Polygon') showArea(calcPlanarAreaM2(points));
         return;
       }
-
-      const last = drawHistory.pop();
-      if (last && last.kind === 'layer') {
-        drawnItems.removeLayer(last.layer);
+      const last = history.pop();
+      if (last && last.type === 'layer') {
+        drawnGroup.removeLayer(last.layer);
+        const prevPoly = [...history].reverse().find(h => h.areaM2 != null);
+        showArea(prevPoly ? prevPoly.areaM2 : 0);
       }
     });
-
-    renderSites('zoning');
   </script>
 </body>
 </html>
