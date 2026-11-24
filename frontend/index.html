@@ -24,7 +24,6 @@
       z-index: 1;
     }
 
-
     /* Shared floating card styling */
     .ui-card {
       position: absolute;
@@ -33,8 +32,8 @@
       backdrop-filter: blur(8px);
       border: 1px solid #e5e7eb;
       border-radius: 14px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);/ * /
-    }bac
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    }
 
     /* Top-left header card */
     .header-card {
@@ -42,7 +41,7 @@
       left: 16px;
       width: 430px;
       max-width: calc(100vw - 32px);
-      padding: 16px 18px;  
+      padding: 16px 18px;
     }
     .header-top {
       display: flex;
@@ -189,6 +188,47 @@
     }
     .layer-desc {
       margin: 3px 0 0 20px;
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    /* Draw toolbar positioned below top-right layer card */
+    .draw-card {
+      top: 378px;
+      right: 16px;
+      width: 295px;
+      padding: 12px 14px;
+    }
+    .draw-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+    }
+    .draw-select {
+      flex: 1;
+      padding: 7px 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 12px;
+      background: #ffffff;
+      color: #111827;
+    }
+    .draw-btn {
+      padding: 7px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #f9fafb;
+      color: #111827;
+      cursor: pointer;
+    }
+    .draw-btn:hover {
+      background: #f3f4f6;
+    }
+    .draw-hint {
+      margin: 7px 0 0;
       font-size: 11px;
       color: #6b7280;
     }
@@ -390,6 +430,21 @@
     </div>
   </div>
 
+  <!-- Draw Features Card -->
+  <div class="ui-card draw-card">
+    <span class="layers-title">Draw Features</span>
+    <div class="draw-controls">
+      <select class="draw-select" id="type">
+        <option value="None" selected>None (Pan Map)</option>
+        <option value="Point">Point</option>
+        <option value="LineString">LineString</option>
+        <option value="Polygon">Polygon</option>
+      </select>
+      <button class="draw-btn" type="button" id="undo">Undo</button>
+    </div>
+    <p class="draw-hint" id="drawHint">Select a geometry type to sketch candidate planting sites. Double-click to finish lines/polygons.</p>
+  </div>
+
   <!-- Bottom-Left Site Inspector Card -->
   <div class="ui-card detail-card" id="detailCard">
     <div class="detail-top">
@@ -452,13 +507,11 @@
   <script>
     const map = L.map('map', { zoomControl: false }).setView([55.9265, -3.2835], 14);
 
-    // Clean OSM basemap (no API key watermark)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    // 17 ground plots from Ground_data_csv (1).csv (EPSG: 27700 converted to WGS84 lat/lon)
     const groundPlotsData = [
       { id: 1,  biomass: 83134.15,  lat: 55.924954, lon: -3.149764 },
       { id: 2,  biomass: 200081.79, lat: 55.924274, lon: -3.149615 },
@@ -493,6 +546,7 @@
         )
       )
     ).addTo(map);
+
     const sampleSites = [
       {
         name: 'Sighthill & Calders Green Corridor',
@@ -552,8 +606,116 @@
       renderSites(layerKey);
     }
 
+    // --- Drawing & Undo Support on Leaflet ---
+    const drawnItems = L.featureGroup().addTo(map);
+    const drawHistory = []; // Stack of completed layers or in-progress vertices
+    let drawType = 'None';
+    let currentPoints = [];
+    let previewLayer = null;
+
+    const typeSelect = document.getElementById('type');
+    const undoBtn = document.getElementById('undo');
+    const drawHint = document.getElementById('drawHint');
+
+    function clearDraft() {
+      currentPoints = [];
+      if (previewLayer) {
+        map.removeLayer(previewLayer);
+        previewLayer = null;
+      }
+    }
+
+    function updatePreview(mouseLatLng = null) {
+      if (previewLayer) {
+        map.removeLayer(previewLayer);
+        previewLayer = null;
+      }
+      const pts = mouseLatLng ? [...currentPoints, mouseLatLng] : [...currentPoints];
+      if (!pts.length) return;
+
+      if (drawType === 'LineString') {
+        previewLayer = L.polyline(pts, { color: '#059669', dashArray: '5,5', weight: 3 }).addTo(map);
+      } else if (drawType === 'Polygon') {
+        previewLayer = L.polygon(pts, { color: '#059669', fillColor: '#10b981', fillOpacity: 0.25, dashArray: '5,5' }).addTo(map);
+      }
+    }
+
+    function finishShape() {
+      if (drawType === 'LineString' && currentPoints.length >= 2) {
+        const line = L.polyline(currentPoints, { color: '#047857', weight: 3 }).addTo(drawnItems);
+        drawHistory.push({ kind: 'layer', layer: line });
+      } else if (drawType === 'Polygon' && currentPoints.length >= 3) {
+        const poly = L.polygon(currentPoints, { color: '#047857', fillColor: '#10b981', fillOpacity: 0.45, weight: 2 }).addTo(drawnItems);
+        drawHistory.push({ kind: 'layer', layer: poly });
+      }
+      clearDraft();
+    }
+
+    typeSelect.addEventListener('change', (e) => {
+      clearDraft();
+      drawType = e.target.value;
+      if (drawType === 'None') {
+        map.doubleClickZoom.enable();
+        drawHint.textContent = 'Drawing disabled. Click map or study site to inspect.';
+      } else {
+        map.doubleClickZoom.disable();
+        drawHint.textContent = drawType === 'Point'
+          ? 'Click on the map to place a Point feature.'
+          : `Click to add ${drawType} vertices; double-click to finish.`;
+      }
+    });
+
+    map.on('click', (e) => {
+      if (drawType === 'None') return;
+
+      if (drawType === 'Point') {
+        const marker = L.circleMarker(e.latlng, {
+          radius: 7,
+          color: '#065f46',
+          weight: 2,
+          fillColor: '#10b981',
+          fillOpacity: 0.9
+        }).addTo(drawnItems);
+        drawHistory.push({ kind: 'layer', layer: marker });
+        return;
+      }
+
+      currentPoints.push(e.latlng);
+      drawHistory.push({ kind: 'vertex', type: drawType });
+      updatePreview();
+    });
+
+    map.on('mousemove', (e) => {
+      if ((drawType === 'LineString' || drawType === 'Polygon') && currentPoints.length > 0) {
+        updatePreview(e.latlng);
+      }
+    });
+
+    map.on('dblclick', (e) => {
+      if (drawType === 'LineString' || drawType === 'Polygon') {
+        L.DomEvent.stopPropagation(e);
+        finishShape();
+      }
+    });
+
+    undoBtn.addEventListener('click', () => {
+      if (currentPoints.length > 0) {
+        currentPoints.pop();
+        if (drawHistory.length && drawHistory[drawHistory.length - 1].kind === 'vertex') {
+          drawHistory.pop();
+        }
+        updatePreview();
+        return;
+      }
+
+      const last = drawHistory.pop();
+      if (last && last.kind === 'layer') {
+        drawnItems.removeLayer(last.layer);
+      }
+    });
+
     renderSites('zoning');
   </script>
 </body>
 </html>
-
+      
