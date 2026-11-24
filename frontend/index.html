@@ -1,63 +1,559 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edinburgh Capital Greenspace </title>
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Capital Greenspace — Edinburgh</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #111827;
+      overflow: hidden;
+    }
+    #map {
+      width: 100%;
+      height: 100vh;
+      z-index: 1;
+    }
+
+
+    /* Shared floating card styling */
+    .ui-card {
+      position: absolute;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);/ * /
+    }bac
+
+    /* Top-left header card */
+    .header-card {
+      top: 16px;
+      left: 16px;
+      width: 430px;
+      max-width: calc(100vw - 32px);
+      padding: 16px 18px;  
+    }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .brand-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .brand-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: #dcfce7;
+      color: #15803d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .header-card h1 {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.25;
+      font-weight: 700;
+    }
+    .header-card .subtitle {
+      margin: 3px 0 0;
+      font-size: 12px;
+      color: #6b7280;
+    }
+    .gh-badge {
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      color: #111827;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 9px;
+      border-radius: 7px;
+      white-space: nowrap;
+    }
+    .target-section {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #f3f4f6;
+    }
+    .target-labels {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+    .target-labels span:first-child {
+      color: #4b5563;
+      font-weight: 500;
+    }
+    .target-labels span:last-child {
+      color: #047857;
+      font-weight: 700;
+    }
+    .progress-track {
+      width: 100%;
+      height: 7px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 41.3%;
+      background: #10b981;
+      border-radius: 999px;
+    }
+
+    /* Top-right layer panel */
+    .layers-card {
+      top: 16px;
+      right: 16px;
+      width: 295px;
+      padding: 14px;
+    }
+    .layers-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .layers-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #4b5563;
+      text-transform: uppercase;
+    }
+    .sites-pill {
+      font-size: 11px;
+      font-weight: 600;
+      color: #374151;
+      background: #f3f4f6;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+    .layer-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 9px 11px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      background: #ffffff;
+    }
+    .layer-item:last-child {
+      margin-bottom: 0;
+    }
+    .layer-item.active {
+      border-color: #10b981;
+      background: #f0fdf4;
+    }
+    .layer-item-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #111827;
+    }
+    .radio-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid #9ca3af;
+      flex-shrink: 0;
+    }
+    .layer-item.active .radio-dot {
+      border-color: #059669;
+      background: #10b981;
+      box-shadow: inset 0 0 0 2px #ffffff;
+    }
+    .layer-desc {
+      margin: 3px 0 0 20px;
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    /* Bottom-left detail card */
+    .detail-card {
+      bottom: 20px;
+      left: 16px;
+      width: 340px;
+      max-width: calc(100vw - 32px);
+      padding: 16px;
+    }
+    .detail-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .tag-pill {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #047857;
+      background: #d1fae5;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 18px;
+      line-height: 1;
+      color: #9ca3af;
+      cursor: pointer;
+      padding: 0 4px;
+    }
+    .close-btn:hover {
+      color: #374151;
+    }
+    .detail-card h2 {
+      margin: 8px 0 12px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #111827;
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .metric-box {
+      background: #f9fafb;
+      border: 1px solid #f3f4f6;
+      border-radius: 9px;
+      padding: 9px 10px;
+    }
+    .metric-label {
+      font-size: 11px;
+      color: #6b7280;
+      margin-bottom: 3px;
+    }
+    .metric-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: #111827;
+    }
+    .priority-banner {
+      background: #0f172a;
+      color: #ffffff;
+      border-radius: 10px;
+      padding: 11px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .priority-kicker {
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #34d399;
+      text-transform: uppercase;
+    }
+    .priority-sub {
+      font-size: 11.5px;
+      color: #e5e7eb;
+      margin-top: 2px;
+    }
+    .priority-score {
+      text-align: right;
+      line-height: 1.1;
+    }
+    .priority-score strong {
+      font-size: 20px;
+      color: #34d399;
+      display: block;
+    }
+    .priority-score span {
+      font-size: 10px;
+      color: #9ca3af;
+    }
+
+    /* Bottom-right legend card */
+    .legend-card {
+      bottom: 20px;
+      right: 16px;
+      width: 210px;
+      padding: 12px 14px;
+    }
+    .legend-title {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #111827;
+    }
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.5px;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+    .legend-row:last-child {
+      margin-bottom: 0;
+    }
+    .swatch {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+  </style>
 </head>
 <body>
-    <!-- Top Header & KPI Tracker -->
-    <header id="header">
-        <div class="title-area">
-            <h1>Edinburgh Capital Greenspace</h1>
-            <span class="subtitle">Urban Forestry & Equity Prioritization</span>
-        </div>
-        <div class="kpi-banner">
-            <span class="kpi-label">Tree Progress:</span>
-            <span id="tree-counter" class="kpi-value">412,850 / 1,000,000</span>
-        </div>
-    </header>
 
-    <!-- Main Map Container -->
-    <div id="map"></div>
-
-    <!-- Layer Toggle & Slider Control Panel -->
-    <div id="control-panel" class="leaflet-control">
-        <h3>Map Layers</h3>
-        <div class="layer-toggles">
-            <label><input type="radio" name="layer" value="base" checked> Base Zoning</label>
-            <label><input type="radio" name="layer" value="carbon"> Layer 1: Carbon Stock</label>
-            <label><input type="radio" name="layer" value="deprivation"> Layer 2: Deprivation Index</label>
-            <label><input type="radio" name="layer" value="priority"> Layer 3: Planting Priority</label>
+  <!-- Top-Left Header & Target Progress -->
+  <div class="ui-card header-card">
+    <div class="header-top">
+      <div class="brand-row">
+        <div class="brand-icon">🌳</div>
+        <div>
+          <h1>Capital Greenspace — Edinburgh</h1>
+          <p class="subtitle">Urban Forestry Carbon & Environmental Equity Decision Support</p>
         </div>
-
-        <div id="slider-container" class="slider-box hidden">
-            <label for="priority-slider">Prioritize Social Equity vs Carbon</label>
-            <input type="range" id="priority-slider" min="0" max="4" step="1" value="2">
-            <span id="slider-label">Balanced Weight (Step 3/5)</span>
-        </div>
+      </div>
+      <div class="gh-badge"></> GitHub JS Modules</div>
     </div>
 
-    <!-- Park Details Slide-Out Drawer -->
-    <div id="info-drawer" class="drawer hidden">
-        <button id="close-drawer">×</button>
-        <h2 id="park-title">Park Name</h2>
-        <div class="metrics-list">
-            <p><strong>Current Trees:</strong> <span id="metric-trees">--</span></p>
-            <p><strong>Carbon Stock:</strong> <span id="metric-carbon">--</span> tC</p>
-            <p><strong>Deprivation Percentile:</strong> <span id="metric-deprivation">--</span>th</p>
-        </div>
+    <div class="target-section">
+      <div class="target-labels">
+        <span>Edinburgh 1 Million Trees Target (Study Sites)</span>
+        <span>412,850 / 1,000,000 Trees (41.3%)</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top-Right Layer Switcher -->
+  <div class="ui-card layers-card">
+    <div class="layers-header">
+      <span class="layers-title">Map Data Layers</span>
+      <span class="sites-pill">21 Study Sites</span>
     </div>
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Modular JS Scripts -->
-    <script src="js/map.js"></script>
-    <script src="js/layers.js"></script>
-    <script src="js/ui.js"></script>
+    <div class="layer-item active" data-layer="zoning" onclick="selectLayer('zoning', this)">
+      <div class="layer-item-top">
+        <span class="radio-dot"></span>
+        <span>Base Zoning View</span>
+      </div>
+      <p class="layer-desc">Public greenspaces & brownspace sites</p>
+    </div>
+
+    <div class="layer-item" data-layer="carbon" onclick="selectLayer('carbon', this)">
+      <div class="layer-item-top">
+        <span class="radio-dot"></span>
+        <span>Layer 1: Current Carbon Stock</span>
+      </div>
+      <p class="layer-desc">LiDAR biomass carbon storage (tC)</p>
+    </div>
+
+    <div class="layer-item" data-layer="deprivation" onclick="selectLayer('deprivation', this)">
+      <div class="layer-item-top">
+        <span class="radio-dot"></span>
+        <span>Layer 2: Environmental Deprivation</span>
+      </div>
+      <p class="layer-desc">Local data zone deprivation percentile</p>
+    </div>
+
+    <div class="layer-item" data-layer="planting" onclick="selectLayer('planting', this)">
+      <div class="layer-item-top">
+        <span class="radio-dot"></span>
+        <span>Layer 3: Proposed Planting Zones</span>
+      </div>
+      <p class="layer-desc">Multi-criteria priority overlay</p>
+    </div>
+  </div>
+
+  <!-- Bottom-Left Site Inspector Card -->
+  <div class="ui-card detail-card" id="detailCard">
+    <div class="detail-top">
+      <span class="tag-pill" id="siteType">Public Greenspace</span>
+      <button class="close-btn" onclick="document.getElementById('detailCard').style.display='none'" title="Close">×</button>
+    </div>
+    <h2 id="siteName">Sighthill & Calders Green Corridor</h2>
+
+    <div class="metrics-grid">
+      <div class="metric-box">
+        <div class="metric-label">🌲 Current Trees</div>
+        <div class="metric-value" id="metricTrees">31,400</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">🌿 Carbon Stock</div>
+        <div class="metric-value" id="metricCarbon">4,890 tC</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">☁️ CO₂ Sequestration</div>
+        <div class="metric-value" id="metricCo2">17,946 tCO₂</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">📊 Deprivation Index</div>
+        <div class="metric-value" id="metricDeprivation">95th Percentile</div>
+      </div>
+    </div>
+
+    <div class="priority-banner">
+      <div>
+        <div class="priority-kicker">Planting Priority — 50% (Balanced)</div>
+        <div class="priority-sub" id="priorityText">High Candidate: Strong canopy & equity impact</div>
+      </div>
+      <div class="priority-score">
+        <strong id="priorityScore">84</strong>
+        <span>/100</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom-Right Legend -->
+  <div class="ui-card legend-card">
+    <div class="legend-title">Base Land Zoning</div>
+    <div class="legend-row">
+      <span class="swatch" style="background:#10b981;"></span>
+      <span>Public Greenspace</span>
+    </div>
+    <div class="legend-row">
+      <span class="swatch" style="background:#d97706;"></span>
+      <span>Brownspace Site</span>
+    </div>
+    <div class="legend-row">
+      <span class="swatch" style="background:#9ca3af;"></span>
+      <span>Urban Fabric (Base)</span>
+    </div>
+  </div>
+
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map', { zoomControl: false }).setView([55.9265, -3.2835], 14);
+
+    // Clean OSM basemap (no API key watermark)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // 17 ground plots from Ground_data_csv (1).csv (EPSG: 27700 converted to WGS84 lat/lon)
+    const groundPlotsData = [
+      { id: 1,  biomass: 83134.15,  lat: 55.924954, lon: -3.149764 },
+      { id: 2,  biomass: 200081.79, lat: 55.924274, lon: -3.149615 },
+      { id: 3,  biomass: 235879.56, lat: 55.924028, lon: -3.149833 },
+      { id: 4,  biomass: 168636.97, lat: 55.923570, lon: -3.149518 },
+      { id: 5,  biomass: 114423.82, lat: 55.925661, lon: -3.145731 },
+      { id: 6,  biomass: 468002.60, lat: 55.924190, lon: -3.138782 },
+      { id: 7,  biomass: 142059.87, lat: 55.953349, lon: -3.213182 },
+      { id: 8,  biomass: 110296.04, lat: 55.952322, lon: -3.223615 },
+      { id: 9,  biomass: 234610.55, lat: 55.959853, lon: -3.277249 },
+      { id: 10, biomass: 357246.12, lat: 55.956837, lon: -3.275801 },
+      { id: 11, biomass: 167557.03, lat: 55.947241, lon: -3.149330 },
+      { id: 12, biomass: 201797.05, lat: 55.948250, lon: -3.148897 },
+      { id: 13, biomass: 142540.56, lat: 55.945052, lon: -3.147932 },
+      { id: 14, biomass: 260581.23, lat: 55.937158, lon: -3.120522 },
+      { id: 15, biomass: 129348.56, lat: 55.937367, lon: -3.116822 },
+      { id: 16, biomass: 121949.90, lat: 55.937661, lon: -3.116347 },
+      { id: 17, biomass: 152335.60, lat: 55.932874, lon: -3.114247 }
+    ];
+
+    const groundPlotsLayer = L.layerGroup(
+      groundPlotsData.map(pt =>
+        L.circleMarker([pt.lat, pt.lon], {
+          radius: 6,
+          color: '#1e3a8a',
+          weight: 2,
+          fillColor: '#3b82f6',
+          fillOpacity: 0.85
+        }).bindPopup(
+          `<strong>Field Plot #${pt.id}</strong><br>` +
+          `<strong>Ground Biomass:</strong> ${pt.biomass.toLocaleString()} kg/ha`
+        )
+      )
+    ).addTo(map);
+    const sampleSites = [
+      {
+        name: 'Sighthill & Calders Green Corridor',
+        type: 'Public Greenspace',
+        trees: '31,400',
+        carbon: '4,890 tC',
+        co2: '17,946 tCO₂',
+        deprivation: '95th Percentile',
+        priorityText: 'High Candidate: Strong canopy & equity impact',
+        score: 84,
+        coords: [
+          [55.9295, -3.2920],
+          [55.9302, -3.2760],
+          [55.9225, -3.2750],
+          [55.9218, -3.2905]
+        ]
+      }
+    ];
+
+    let activePolygon;
+
+    function renderSites(mode = 'zoning') {
+      if (activePolygon) {
+        map.removeLayer(activePolygon);
+      }
+
+      const styles = {
+        zoning:      { color: '#111827', fillColor: '#22c55e', fillOpacity: 0.65 },
+        carbon:      { color: '#065f46', fillColor: '#10b981', fillOpacity: 0.72 },
+        deprivation: { color: '#991b1b', fillColor: '#f59e0b', fillOpacity: 0.65 },
+        planting:    { color: '#1d4ed8', fillColor: '#3b82f6', fillOpacity: 0.65 }
+      };
+
+      const s = sampleSites[0];
+      activePolygon = L.polygon(s.coords, {
+        ...(styles[mode] || styles.zoning),
+        weight: 2
+      }).addTo(map);
+
+      activePolygon.bindTooltip(s.name, { permanent: true, direction: 'center' });
+      activePolygon.on('click', () => {
+        document.getElementById('detailCard').style.display = 'block';
+        document.getElementById('siteName').textContent = s.name;
+        document.getElementById('siteType').textContent = s.type;
+        document.getElementById('metricTrees').textContent = s.trees;
+        document.getElementById('metricCarbon').textContent = s.carbon;
+        document.getElementById('metricCo2').textContent = s.co2;
+        document.getElementById('metricDeprivation').textContent = s.deprivation;
+        document.getElementById('priorityText').textContent = s.priorityText;
+        document.getElementById('priorityScore').textContent = s.score;
+      });
+    }
+
+    function selectLayer(layerKey, el) {
+      document.querySelectorAll('.layer-item').forEach(item => item.classList.remove('active'));
+      if (el) el.classList.add('active');
+      renderSites(layerKey);
+    }
+
+    renderSites('zoning');
+  </script>
 </body>
 </html>
+
